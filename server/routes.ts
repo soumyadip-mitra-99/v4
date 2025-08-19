@@ -9,6 +9,7 @@ import { insertFoodListingSchema, insertPickupSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
 import { env } from "./env";
+import ConnectPgSimple from "connect-pg-simple";
 
 const upload = multer({ 
   storage: multer.memoryStorage(),
@@ -16,12 +17,23 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Session configuration
+  // Session configuration with PostgreSQL store
+  const PgSession = ConnectPgSimple(session);
+  
   app.use(session({
+    store: new PgSession({
+      conString: env.DATABASE_URL,
+      tableName: 'sessions',
+      createTableIfMissing: true,
+    }),
     secret: env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: env.isProduction(), maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+    cookie: { 
+      secure: env.isProduction(), 
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
   }));
 
   app.use(passport.initialize());
@@ -69,6 +81,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/auth/google/callback", 
     passport.authenticate("google", { failureRedirect: "/?error=auth_failed" }),
     (req, res) => {
+      console.log("OAuth callback successful, user:", (req.user as any)?.email);
       res.redirect("/?success=authenticated");
     }
   );
