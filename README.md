@@ -28,6 +28,8 @@ cd ecoshare
 npm install
 ```
 
+> **For VS Code Users:** See [SETUP_LOCAL.md](SETUP_LOCAL.md) for detailed local development setup instructions.
+
 2. **Set up environment variables:**
 
 Create a `.env` file in the root directory:
