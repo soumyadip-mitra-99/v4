@@ -83,7 +83,14 @@ export function Navigation() {
                 <DropdownMenuContent className="w-56 glass-strong border-border" align="end" forceMount>
                   <div className="flex items-center justify-start gap-2 p-2">
                     <div className="flex flex-col space-y-1 leading-none">
-                      <p className="text-sm font-medium text-foreground">{user?.name}</p>
+                      <p className="text-sm font-medium text-foreground">
+                        {user?.name}
+                        {user?.email === "demo@ecoshare.app" && (
+                          <span className="ml-2 px-2 py-1 text-xs bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-300 rounded-full">
+                            Demo Mode
+                          </span>
+                        )}
+                      </p>
                       <p className="text-xs text-muted-foreground">{user?.email}</p>
                     </div>
                   </div>
@@ -93,6 +100,19 @@ export function Navigation() {
                       <span className="w-full cursor-pointer text-foreground hover:bg-surface">Dashboard</span>
                     </Link>
                   </DropdownMenuItem>
+                  {user?.email === "demo@ecoshare.app" && (
+                    <>
+                      <DropdownMenuSeparator className="bg-border" />
+                      <DropdownMenuItem onClick={logout} className="cursor-pointer text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20">
+                        <span className="flex items-center space-x-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                          </svg>
+                          <span>Exit Demo Mode</span>
+                        </span>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator className="bg-border" />
                   <DropdownMenuItem onClick={logout} className="cursor-pointer text-foreground hover:bg-surface">
                     Sign Out
