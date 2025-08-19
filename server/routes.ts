@@ -8,6 +8,7 @@ import { analyzeFoodImage } from "./services/gemini";
 import { insertFoodListingSchema, insertPickupSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
+import { env } from "./env";
 
 const upload = multer({ 
   storage: multer.memoryStorage(),
@@ -17,10 +18,10 @@ const upload = multer({
 export async function registerRoutes(app: Express): Promise<Server> {
   // Session configuration
   app.use(session({
-    secret: process.env.SESSION_SECRET || "default-secret",
+    secret: env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+    cookie: { secure: env.isProduction(), maxAge: 24 * 60 * 60 * 1000 } // 24 hours
   }));
 
   app.use(passport.initialize());
@@ -28,8 +29,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Passport configuration
   passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID || "",
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    clientID: env.GOOGLE_CLIENT_ID,
+    clientSecret: env.GOOGLE_CLIENT_SECRET,
     callbackURL: "/api/auth/google/callback"
   }, async (accessToken: string, refreshToken: string, profile: any, done: any) => {
     try {

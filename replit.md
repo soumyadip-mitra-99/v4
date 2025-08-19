@@ -8,6 +8,17 @@ EcoShare is an intelligent surplus food management platform that connects campus
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+**Environment Configuration Updates (August 19, 2025):**
+- Added comprehensive environment variable management with `server/env.ts`
+- Integrated dotenv for local development support
+- Created `.env.example` template for local setup
+- Added `.gitignore` to protect sensitive environment files
+- Updated all services to use centralized environment configuration
+- Added support for optional Google AI API key for Gemini integration
+- Improved local development workflow with port 5000 configuration
+
 ## System Architecture
 
 ### Full-Stack Monorepo Architecture
