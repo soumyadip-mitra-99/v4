@@ -62,10 +62,12 @@ app.use((req, res, next) => {
   // It is the only port that is not firewalled.
   const { env } = await import("./env");
   const port = env.PORT;
+  const host = env.isReplit() ? "0.0.0.0" : "localhost";
+  
   server.listen({
     port,
-    host: "0.0.0.0",
-    reusePort: true,
+    host,
+    reusePort: env.isReplit(),
   }, () => {
     log(`serving on port ${port}`);
   });
