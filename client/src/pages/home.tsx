@@ -6,7 +6,7 @@ import { ViewportBorder } from "@/components/ui/viewport-border";
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      <ViewportBorder />
+      {/* <ViewportBorder /> */}
       <div className="relative z-10">
         <Navigation />
         <AuthHero />

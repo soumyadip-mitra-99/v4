@@ -62,7 +62,7 @@ app.use((req, res, next) => {
   // It is the only port that is not firewalled.
   const { env } = await import("./env");
   const port = env.PORT;
-  const host = "localhost";
+  const host = "0.0.0.0";
   
   server.listen(port, host, () => {
     log(`serving on port ${port}`);
