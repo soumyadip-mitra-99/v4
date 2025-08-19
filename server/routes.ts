@@ -45,6 +45,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     : "http://localhost:5000/api/auth/google/callback";
     
   console.log("✅ Google OAuth configured with callback URL:", callbackURL);
+  console.log("🔍 Environment check - REPLIT_DOMAINS:", process.env.REPLIT_DOMAINS);
+  console.log("🔍 Environment check - GOOGLE_CLIENT_ID:", env.GOOGLE_CLIENT_ID ? "present" : "missing");
     
   passport.use(new GoogleStrategy({
     clientID: env.GOOGLE_CLIENT_ID,
@@ -88,9 +90,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Auth routes
+  // Auth routes  
   app.get("/api/auth/google", (req, res, next) => {
-    console.log("Starting Google OAuth flow...");
+    console.log("🚀 Starting Google OAuth flow...");
+    console.log("🔗 Callback URL being sent to Google:", callbackURL);
     next();
   }, passport.authenticate("google", { scope: ["profile", "email"] }));
 
