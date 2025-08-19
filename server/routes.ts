@@ -77,6 +77,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test route to check passport configuration
+  app.get("/api/auth/test", (req, res) => {
+    res.json({
+      isAuthenticated: req.isAuthenticated(),
+      sessionID: req.sessionID,
+      user: req.user || null,
+      googleClientId: env.GOOGLE_CLIENT_ID ? "configured" : "missing",
+      callbackURL: callbackURL
+    });
+  });
+
   // Auth routes
   app.get("/api/auth/google", (req, res, next) => {
     console.log("Starting Google OAuth flow...");
@@ -85,16 +96,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/auth/google/callback", 
     (req, res, next) => {
-      console.log("OAuth callback received with code:", req.query.code ? "present" : "missing");
-      console.log("OAuth callback received with error:", req.query.error || "none");
+      console.log("=== OAuth Callback Debug ===");
+      console.log("Full query params:", req.query);
+      console.log("Code present:", req.query.code ? "yes" : "no");
+      console.log("Error present:", req.query.error ? req.query.error : "none");
+      console.log("State present:", req.query.state ? "yes" : "no");
       next();
     },
-    passport.authenticate("google", { 
-      failureRedirect: "/?error=auth_failed",
-      failureMessage: true 
-    }),
+    (req, res, next) => {
+      passport.authenticate("google", { 
+        failureRedirect: "/?error=auth_failed",
+        failureMessage: true 
+      })(req, res, (err: any) => {
+        if (err) {
+          console.log("Passport authentication error:", err);
+          return res.redirect("/?error=passport_error");
+        }
+        next();
+      });
+    },
     (req, res) => {
-      console.log("OAuth callback successful, user:", (req.user as any)?.email);
+      console.log("OAuth successful! User:", (req.user as any)?.email);
       res.redirect("/?success=authenticated");
     }
   );
