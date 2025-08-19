@@ -28,10 +28,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(passport.session());
 
   // Passport configuration
+  const callbackURL = env.isReplit() 
+    ? `https://${process.env.REPLIT_DOMAINS}/api/auth/google/callback`
+    : "/api/auth/google/callback";
+    
   passport.use(new GoogleStrategy({
     clientID: env.GOOGLE_CLIENT_ID,
     clientSecret: env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "/api/auth/google/callback"
+    callbackURL: callbackURL
   }, async (accessToken: string, refreshToken: string, profile: any, done: any) => {
     try {
       const user = await storage.upsertUser({
