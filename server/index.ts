@@ -62,13 +62,12 @@ app.use((req, res, next) => {
   // It is the only port that is not firewalled.
   const { env } = await import("./env");
   const port = env.PORT;
-  const host = env.isReplit() ? "0.0.0.0" : "localhost";
+  const host = "localhost";
   
-  server.listen({
-    port,
-    host,
-    reusePort: env.isReplit(),
-  }, () => {
+  server.listen(port, host, () => {
     log(`serving on port ${port}`);
+    console.log(`\n🚀 EcoShare is running at:`);
+    console.log(`   Local:   http://localhost:${port}`);
+    console.log(`   Network: http://127.0.0.1:${port}\n`);
   });
 })();
