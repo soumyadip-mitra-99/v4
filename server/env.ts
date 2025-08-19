@@ -35,12 +35,7 @@ export const env = {
 } as const;
 
 // Validation for required environment variables
-const requiredVars = ['DATABASE_URL'];
-
-// Google OAuth is only required in production
-if (env.isProduction()) {
-  requiredVars.push('GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET');
-}
+const requiredVars = ['DATABASE_URL', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'];
 
 for (const varName of requiredVars) {
   if (!env[varName as keyof typeof env]) {
