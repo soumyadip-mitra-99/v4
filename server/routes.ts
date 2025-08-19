@@ -44,7 +44,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     ? `https://${process.env.REPLIT_DOMAINS || process.env.REPLIT_DEV_DOMAIN}/api/auth/google/callback`
     : "http://localhost:5000/api/auth/google/callback";
     
-  console.log("Google OAuth callback URL:", callbackURL);
+  console.log("✅ Google OAuth configured with callback URL:", callbackURL);
     
   passport.use(new GoogleStrategy({
     clientID: env.GOOGLE_CLIENT_ID,
