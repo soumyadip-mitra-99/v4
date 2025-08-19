@@ -63,9 +63,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
   app.get("/api/auth/google/callback", 
-    passport.authenticate("google", { failureRedirect: "/login" }),
+    passport.authenticate("google", { failureRedirect: "/?error=auth_failed" }),
     (req, res) => {
-      res.redirect("/dashboard");
+      res.redirect("/?success=authenticated");
     }
   );
 
@@ -78,6 +78,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/auth/me", (req, res) => {
     res.json(req.user || null);
+  });
+
+  // Demo authentication route for testing
+  app.post("/api/auth/demo", async (req, res) => {
+    try {
+      const demoUser = await storage.upsertUser({
+        email: "demo@ecoshare.app",
+        name: "Demo User",
+        profilePicture: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
+      });
+      
+      req.login(demoUser, (err) => {
+        if (err) {
+          return res.status(500).json({ error: "Failed to login demo user" });
+        }
+        res.json(demoUser);
+      });
+    } catch (error) {
+      console.error("Demo auth error:", error);
+      res.status(500).json({ error: "Failed to create demo user" });
+    }
   });
 
   // Middleware to check authentication

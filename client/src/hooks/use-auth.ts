@@ -23,6 +23,14 @@ export function useAuth() {
     window.location.href = "/api/auth/google";
   };
 
+  const loginWithDemo = useMutation({
+    mutationFn: () => apiRequest("POST", "/api/auth/demo"),
+    onSuccess: (user) => {
+      queryClient.setQueryData(["/api/auth/me"], user);
+      queryClient.invalidateQueries();
+    },
+  });
+
   const logout = () => {
     logoutMutation.mutate();
   };
@@ -32,6 +40,7 @@ export function useAuth() {
     isLoading,
     isAuthenticated: !!user,
     loginWithGoogle,
+    loginWithDemo: loginWithDemo.mutate,
     logout,
     error,
   };
