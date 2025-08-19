@@ -4,39 +4,63 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(215, 28%, 17%);
-  --foreground: hsl(0, 0%, 100%);
-  --card: hsla(0, 0%, 100%, 0.05);
-  --card-foreground: hsl(0, 0%, 100%);
-  --popover: hsla(0, 0%, 100%, 0.08);
-  --popover-foreground: hsl(0, 0%, 100%);
+  /* Light mode colors */
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(222, 84%, 5%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(222, 84%, 5%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(222, 84%, 5%);
   --primary: hsl(158, 64%, 51%);
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(210, 25%, 7.84%);
-  --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsla(0, 0%, 100%, 0.05);
-  --muted-foreground: hsl(210, 3.39%, 46.27%);
+  --secondary: hsl(210, 40%, 95%);
+  --secondary-foreground: hsl(222, 47%, 11%);
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(215, 16%, 47%);
   --accent: hsl(42, 92%, 56%);
-  --accent-foreground: hsl(0, 0%, 0%);
+  --accent-foreground: hsl(222, 84%, 5%);
   --destructive: hsl(0, 84%, 60%);
   --destructive-foreground: hsl(0, 0%, 100%);
-  --border: hsla(0, 0%, 100%, 0.1);
-  --input: hsla(0, 0%, 100%, 0.05);
+  --border: hsl(214, 32%, 91%);
+  --input: hsl(214, 32%, 91%);
   --ring: hsl(158, 64%, 51%);
   --radius: 0.75rem;
   
   /* Custom EcoShare Colors */
   --primary-light: hsl(158, 64%, 65%);
   --primary-dark: hsl(158, 64%, 35%);
-  --surface: hsla(0, 0%, 100%, 0.05);
-  --surface-light: hsla(0, 0%, 100%, 0.1);
-  --glassmorphism: hsla(0, 0%, 100%, 0.05);
-  --glassmorphism-strong: hsla(0, 0%, 100%, 0.08);
+  --surface: hsl(210, 40%, 98%);
+  --surface-light: hsl(210, 40%, 96%);
+  --glassmorphism: hsla(255, 255, 255, 0.8);
+  --glassmorphism-strong: hsla(255, 255, 255, 0.9);
 }
 
 .dark {
-  --background: hsl(215, 28%, 17%);
+  --background: hsl(210, 25%, 7%);
   --foreground: hsl(0, 0%, 100%);
+  --card: hsl(210, 25%, 9%);
+  --card-foreground: hsl(0, 0%, 100%);
+  --popover: hsl(210, 25%, 9%);
+  --popover-foreground: hsl(0, 0%, 100%);
+  --primary: hsl(158, 64%, 51%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(210, 25%, 12%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --muted: hsl(210, 25%, 10%);
+  --muted-foreground: hsl(215, 16%, 65%);
+  --accent: hsl(42, 92%, 56%);
+  --accent-foreground: hsl(0, 0%, 0%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(210, 25%, 15%);
+  --input: hsl(210, 25%, 15%);
+  --ring: hsl(158, 64%, 51%);
+  
+  /* Dark theme overrides */
+  --surface: hsl(210, 25%, 9%);
+  --surface-light: hsl(210, 25%, 12%);
+  --glassmorphism: hsla(0, 0%, 100%, 0.05);
+  --glassmorphism-strong: hsla(0, 0%, 100%, 0.08);
 }
 
 @layer base {
@@ -105,6 +129,11 @@
               radial-gradient(circle at 80% 20%, hsla(158, 64%, 51%, 0.2) 0%, transparent 50%);
 }
 
+.dark .parallax-bg {
+  background: radial-gradient(circle at 20% 80%, hsla(199, 89%, 15%, 0.4) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, hsla(158, 64%, 35%, 0.3) 0%, transparent 50%);
+}
+
 /* Custom Animations */
 .animate-on-scroll {
   opacity: 0;
@@ -121,7 +150,94 @@
 .food-emoji {
   font-size: 2.5rem;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  position: absolute;
+  user-select: none;
+  pointer-events: none;
+}
+
+.food-emoji:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Animation keyframes */
+@keyframes border-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-10px) rotate(2deg); }
+  50% { transform: translateY(-20px) rotate(0deg); }
+  75% { transform: translateY(-10px) rotate(-2deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(52, 211, 153, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(52, 211, 153, 0.6), 0 0 40px rgba(52, 211, 153, 0.2); }
+}
+
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes parallax-float {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  25% { transform: translateY(-15px) translateX(5px); }
+  50% { transform: translateY(-30px) translateX(0px); }
+  75% { transform: translateY(-15px) translateX(-5px); }
+}
+
+/* Utility classes */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-gradient-x {
+  animation: gradient-x 3s ease infinite;
+}
+
+.animate-parallax-float {
+  animation: parallax-float 8s ease-in-out infinite;
+}
+
+/* Gemini branding effects */
+.gemini-badge {
+  background: linear-gradient(45deg, #4285f4, #34a853, #fbbc05, #ea4335);
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}
+
+/* Parallax scrolling effects */
+.parallax-element {
+  will-change: transform;
+}
+
+/* Enhanced glass effects */
+.glass {
+  background: var(--glassmorphism);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.glass-strong {
+  background: var(--glassmorphism-strong);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .food-emoji:hover {

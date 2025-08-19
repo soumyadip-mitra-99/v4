@@ -94,14 +94,14 @@ export function PlatformStatsSection() {
     <section id="impact" className="relative py-20 px-6 stats-section animate-on-scroll">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Platform Impact</h2>
-          <p className="text-xl text-gray-300">Real-time environmental impact powered by our AI analytics</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">Platform Impact</h2>
+          <p className="text-xl text-muted-foreground">Real-time environmental impact powered by our AI analytics</p>
         </div>
         
         <div className="grid md:grid-cols-4 gap-6">
           <div className="glass-strong p-8 rounded-2xl text-center hover:bg-surface-light transition-all">
             <div className="text-4xl font-bold text-primary mb-2 stat-number" data-target={Math.floor(foodSaved)}>0</div>
-            <div className="text-sm text-gray-400 mb-1">kg Food Saved</div>
+            <div className="text-sm text-muted-foreground mb-1">kg Food Saved</div>
             <div className="flex items-center justify-center text-xs text-green-400">
               <span className="mr-1">↗</span>
               <span>Growing daily</span>
@@ -110,7 +110,7 @@ export function PlatformStatsSection() {
           
           <div className="glass-strong p-8 rounded-2xl text-center hover:bg-surface-light transition-all">
             <div className="text-4xl font-bold text-blue-400 mb-2 stat-number" data-target={Math.floor(carbonSaved)}>0</div>
-            <div className="text-sm text-gray-400 mb-1">kg CO₂ Prevented</div>
+            <div className="text-sm text-muted-foreground mb-1">kg CO₂ Prevented</div>
             <div className="flex items-center justify-center text-xs text-green-400">
               <span className="mr-1">↗</span>
               <span>Carbon impact</span>

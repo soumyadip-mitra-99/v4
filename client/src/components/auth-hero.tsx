@@ -45,21 +45,34 @@ export function AuthHero() {
       <section className="relative min-h-screen flex items-center justify-center px-6 py-20">
         <div className="max-w-6xl mx-auto text-center relative z-10">
           
-          {/* Floating Food Elements */}
-          <div className="absolute -top-10 -left-10 food-emoji animate-float" style={{animationDelay: '0s'}}>🥗</div>
-          <div className="absolute -top-5 -right-15 food-emoji animate-float" style={{animationDelay: '1s'}}>🍎</div>
-          <div className="absolute -bottom-10 left-20 food-emoji animate-float" style={{animationDelay: '2s'}}>📦</div>
-          <div className="absolute -bottom-5 right-10 food-emoji animate-float" style={{animationDelay: '3s'}}>📊</div>
+          {/* Floating Food Elements - Better positioned */}
+          <div className="absolute top-10 left-10 md:left-20 food-emoji animate-float" style={{animationDelay: '0s'}}>🥗</div>
+          <div className="absolute top-20 right-10 md:right-20 food-emoji animate-float" style={{animationDelay: '1s'}}>🍎</div>
+          <div className="absolute bottom-20 left-16 md:left-32 food-emoji animate-float" style={{animationDelay: '2s'}}>📦</div>
+          <div className="absolute bottom-32 right-16 md:right-32 food-emoji animate-float" style={{animationDelay: '3s'}}>🌱</div>
+          <div className="absolute top-1/3 left-8 md:left-12 food-emoji animate-float" style={{animationDelay: '4s'}}>🥕</div>
+          <div className="absolute top-1/2 right-8 md:right-12 food-emoji animate-float" style={{animationDelay: '5s'}}>🍞</div>
           
           <div className="animate-on-scroll">
             <h1 className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-blue-400 to-purple-400 bg-clip-text text-transparent leading-tight">
               Save Planet.
             </h1>
             
-            <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto leading-relaxed">
               AI-powered campus food sharing platform that connects communities, 
               reduces waste, and feeds everyone. Join the sustainability revolution.
             </p>
+            
+            {/* Powered by Gemini Badge */}
+            <div className="flex items-center justify-center mb-12">
+              <div className="glass-strong px-6 py-3 rounded-full border-2 border-primary/20 animate-pulse-glow">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-gradient-x"></div>
+                  <span className="gemini-badge text-sm font-semibold">Powered by Google Gemini AI</span>
+                  <div className="w-6 h-6 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 rounded-full animate-gradient-x" style={{animationDelay: '1s'}}></div>
+                </div>
+              </div>
+            </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
               <Button 
@@ -80,7 +93,7 @@ export function AuthHero() {
                   <span className="text-2xl">🧠</span>
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-primary">AI-Powered</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">Smart categorization and freshness assessment</p>
+                <p className="text-muted-foreground text-sm leading-relaxed">Smart categorization and freshness assessment</p>
               </div>
               
               <div className="glass p-8 rounded-2xl hover:bg-surface-light transition-all transform hover:scale-105">
@@ -88,7 +101,7 @@ export function AuthHero() {
                   <span className="text-2xl">👥</span>
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-purple-400">Community Driven</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">Connect campus food providers and recipients</p>
+                <p className="text-muted-foreground text-sm leading-relaxed">Connect campus food providers and recipients</p>
               </div>
               
               <div className="glass p-8 rounded-2xl hover:bg-surface-light transition-all transform hover:scale-105">
@@ -96,7 +109,7 @@ export function AuthHero() {
                   <span className="text-2xl">📈</span>
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-green-400">Impact Tracking</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">Monitor your environmental contribution</p>
+                <p className="text-muted-foreground text-sm leading-relaxed">Monitor your environmental contribution</p>
               </div>
             </div>
           </div>
