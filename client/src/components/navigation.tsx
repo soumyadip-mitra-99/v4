@@ -103,6 +103,8 @@ export function Navigation() {
           </div>
         </div>
       </div>
+      {/* RGB Light Bar - Google AI Style */}
+      <div className="rgb-light-bar"></div>
     </nav>
   );
 }
