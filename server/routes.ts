@@ -78,7 +78,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Auth routes
-  app.get("/api/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+  app.get("/api/auth/google", (req, res, next) => {
+    console.log("Starting Google OAuth flow...");
+    next();
+  }, passport.authenticate("google", { scope: ["profile", "email"] }));
 
   app.get("/api/auth/google/callback", 
     (req, res, next) => {
