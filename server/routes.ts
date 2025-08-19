@@ -79,7 +79,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
   app.get("/api/auth/google/callback", 
-    passport.authenticate("google", { failureRedirect: "/?error=auth_failed" }),
+    (req, res, next) => {
+      console.log("OAuth callback received with code:", req.query.code ? "present" : "missing");
+      console.log("OAuth callback received with error:", req.query.error || "none");
+      next();
+    },
+    passport.authenticate("google", { 
+      failureRedirect: "/?error=auth_failed",
+      failureMessage: true 
+    }),
     (req, res) => {
       console.log("OAuth callback successful, user:", (req.user as any)?.email);
       res.redirect("/?success=authenticated");
