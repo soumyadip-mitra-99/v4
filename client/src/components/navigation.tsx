@@ -27,19 +27,37 @@ export function Navigation() {
             </div>
           </Link>
           
-          {isAuthenticated && (
-            <div className="hidden md:flex items-center space-x-8">
-              <Link href="/dashboard">
-                <a className="text-muted-foreground hover:text-primary transition-colors">Dashboard</a>
+          <div className="hidden md:flex items-center space-x-8">
+            {isAuthenticated && (
+              <Link href="/dashboard" className="text-muted-foreground hover:text-primary transition-colors">
+                Dashboard
               </Link>
-              <Link href="/#features">
-                <a className="text-muted-foreground hover:text-primary transition-colors">Features</a>
-              </Link>
-              <Link href="/#impact">
-                <a className="text-muted-foreground hover:text-primary transition-colors">Impact</a>
-              </Link>
-            </div>
-          )}
+            )}
+            <button 
+              onClick={() => {
+                document.querySelector('#features')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              Features
+            </button>
+            <button 
+              onClick={() => {
+                document.querySelector('#impact')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              Impact
+            </button>
+            <button 
+              onClick={() => {
+                document.querySelector('#algorithm-details')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              Algorithm
+            </button>
+          </div>
 
           <div className="flex items-center space-x-3">
             <ThemeToggle />
@@ -71,8 +89,8 @@ export function Navigation() {
                   </div>
                   <DropdownMenuSeparator className="bg-border" />
                   <DropdownMenuItem asChild>
-                    <Link href="/dashboard" className="w-full cursor-pointer text-foreground hover:bg-surface">
-                      Dashboard
+                    <Link href="/dashboard">
+                      <span className="w-full cursor-pointer text-foreground hover:bg-surface">Dashboard</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-border" />
