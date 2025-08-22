@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoShare - AI-Powered Campus Food Sharing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'hsl(158, 64%, 51%)',
+                        'primary-light': 'hsl(158, 64%, 65%)',
+                        'primary-dark': 'hsl(158, 64%, 35%)',
+                        secondary: 'hsl(210, 25%, 7.84%)',
+                        background: 'hsl(215, 28%, 17%)',
+                        surface: 'rgba(255, 255, 255, 0.05)',
+                        'surface-light': 'rgba(255, 255, 255, 0.1)',
+                        accent: 'hsl(42, 92%, 56%)',
+                        muted: 'hsl(210, 3.39%, 46.27%)',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'border-flow': 'border-flow 3s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'counter': 'counter 2s ease-out forwards',
+                        'slide-up': 'slide-up 0.8s ease-out forwards',
+                        'fade-in': 'fade-in 0.6s ease-out forwards',
+                    },
+                    keyframes: {
+                        'border-flow': {
+                            '0%': { 'background-position': '0% 50%' },
+                            '50%': { 'background-position': '100% 50%' },
+                            '100%': { 'background-position': '0% 50%' }
+                        },
+                        'float': {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        'counter': {
+                            'from': { opacity: '0', transform: 'translateY(20px)' },
+                            'to': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        'slide-up': {
+                            'from': { opacity: '0', transform: 'translateY(30px)' },
+                            'to': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        'fade-in': {
+                            'from': { opacity: '0' },
+                            'to': { opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Professional RGB Gradient Border */
+        .viewport-border {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 9999;
+            padding: 2px;
+            background: linear-gradient(45deg, 
+                hsl(158, 64%, 51%), 
+                hsl(200, 100%, 50%), 
+                hsl(270, 100%, 60%), 
+                hsl(320, 100%, 50%), 
+                hsl(158, 64%, 51%)
+            );
+            background-size: 400% 400%;
+            animation: border-flow 6s ease infinite;
+        }
+        
+        .viewport-content {
+            height: 100%;
+            background: hsl(215, 28%, 17%);
+            border-radius: 0;
+        }
+
+        /* Glassmorphism Effects */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-strong {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Parallax Background Elements */
+        .parallax-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(22, 78, 99, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.2) 0%, transparent 50%);
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Food Emojis 3D Effect */
+        .food-emoji {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            transition: transform 0.3s ease;
+        }
+        
+        .food-emoji:hover {
+            transform: scale(1.2) rotateY(15deg);
+        }
+
+        /* Button Hover Effects */
+        .btn-primary {
+            background: linear-gradient(135deg, hsl(158, 64%, 51%) 0%, hsl(158, 64%, 45%) 100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Statistics Counter Animation */
+        .stat-number {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-background text-white font-sans overflow-x-hidden">
+    <!-- Professional Viewport Border -->
+    <div class="viewport-border">
+        <div class="viewport-content">
+            
+            <!-- @COMPONENT: Navigation [responsive header with auth state] -->
+            <nav class="relative z-50 glass">
+                <div class="max-w-7xl mx-auto px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gradient-to-r from-primary to-primary-dark rounded-xl flex items-center justify-center">
+                                <span class="text-xl">🌱</span>
+                            </div>
+                            <span class="text-xl font-bold">EcoShare</span>
+                        </div>
+                        
+                        <div class="hidden md:flex items-center space-x-8">
+                            <a href="#features" class="text-gray-300 hover:text-primary transition-colors">Features</a>
+                            <a href="#how-it-works" class="text-gray-300 hover:text-primary transition-colors">How it Works</a>
+                            <a href="#impact" class="text-gray-300 hover:text-primary transition-colors">Impact</a>
+                        </div>
+
+                        <div class="flex items-center space-x-3">
+                            <button class="p-2 rounded-lg hover:bg-surface transition-colors">
+                                <span class="text-xl">🌙</span>
+                            </button>
+                            
+                            <!-- @STATE: isAuthenticated:boolean = false -->
+                            <div data-mock="true">
+                                <button data-event="click:handleGoogleLogin" class="btn-primary px-6 py-2 rounded-lg font-medium flex items-center space-x-2">
+                                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                        <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                    </svg>
+                                    <span>Sign In</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <!-- @END_COMPONENT: Navigation -->
+
+            <!-- Parallax Background -->
+            <div class="parallax-bg fixed inset-0 z-0"></div>
+
+            <!-- @COMPONENT: EnhancedAuthHero [hero section with auth CTA and benefits] -->
+            <section class="relative min-h-screen flex items-center justify-center px-6 py-20">
+                <div class="max-w-6xl mx-auto text-center relative z-10">
+                    
+                    <!-- Floating Food Elements -->
+                    <div class="absolute -top-10 -left-10 food-emoji animate-float" style="animation-delay: 0s;">🥗</div>
+                    <div class="absolute -top-5 -right-15 food-emoji animate-float" style="animation-delay: 1s;">🍎</div>
+                    <div class="absolute -bottom-10 left-20 food-emoji animate-float" style="animation-delay: 2s;">📦</div>
+                    <div class="absolute -bottom-5 right-10 food-emoji animate-float" style="animation-delay: 3s;">📊</div>
+                    
+                    <div class="animate-on-scroll">
+                        <h1 class="text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-blue-400 to-purple-400 bg-clip-text text-transparent leading-tight">
+                            Save Planet.
+                        </h1>
+                        
+                        <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+                            AI-powered campus food sharing platform that connects communities, 
+                            reduces waste, and feeds everyone. Join the sustainability revolution.
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+                            <button data-event="click:handleGoogleAuth" class="btn-primary px-8 py-4 rounded-xl font-semibold text-lg flex items-center justify-center space-x-3 min-w-[200px]">
+                                <svg class="w-6 h-6" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                </svg>
+                                <span>Continue with Google</span>
+                            </button>
+                            
+                            <button data-event="click:handleDemoMode" class="glass-strong px-8 py-4 rounded-xl font-semibold text-lg flex items-center justify-center space-x-3 min-w-[200px] hover:bg-surface-light transition-all">
+                                <span>▶️</span>
+                                <span>Try Demo Mode</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Key Benefits Grid -->
+                        <div class="grid md:grid-cols-3 gap-6 mt-20">
+                            <div class="glass p-8 rounded-2xl hover:bg-surface-light transition-all transform hover:scale-105">
+                                <div class="w-16 h-16 bg-gradient-to-r from-primary to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-2xl">🧠</span>
+                                </div>
+                                <h3 class="text-xl font-bold mb-3 text-primary">AI-Powered</h3>
+                                <p class="text-gray-300 text-sm leading-relaxed">Smart categorization and freshness assessment</p>
+                            </div>
+                            
+                            <div class="glass p-8 rounded-2xl hover:bg-surface-light transition-all transform hover:scale-105">
+                                <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-2xl">👥</span>
+                                </div>
+                                <h3 class="text-xl font-bold mb-3 text-purple-400">Community Driven</h3>
+                                <p class="text-gray-300 text-sm leading-relaxed">Connect campus food providers and recipients</p>
+                            </div>
+                            
+                            <div class="glass p-8 rounded-2xl hover:bg-surface-light transition-all transform hover:scale-105">
+                                <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-2xl">📈</span>
+                                </div>
+                                <h3 class="text-xl font-bold mb-3 text-green-400">Impact Tracking</h3>
+                                <p class="text-gray-300 text-sm leading-relaxed">Monitor your environmental contribution</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- @END_COMPONENT: EnhancedAuthHero -->
+
+            <!-- @COMPONENT: PlatformImpact [animated statistics with real-time counters] -->
+            <section id="impact" class="relative py-20 px-6">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16 animate-on-scroll">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-6 text-white">Platform Impact</h2>
+                        <p class="text-xl text-gray-300">Real-time environmental impact powered by our AI analytics</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-4 gap-6">
+                        <!-- @FUNCTIONALITY: These counters should animate from 0 to target value on scroll -->
+                        <div class="glass-strong p-8 rounded-2xl text-center hover:bg-surface-light transition-all animate-on-scroll">
+                            <div class="text-4xl font-bold text-primary mb-2 stat-number" data-target="1247">0</div>
+                            <div class="text-sm text-gray-400 mb-1">kg Food Saved</div>
+                            <div class="flex items-center justify-center text-xs text-green-400">
+                                <span class="mr-1">↗</span>
+                                <span>+23% this month</span>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-strong p-8 rounded-2xl text-center hover:bg-surface-light transition-all animate-on-scroll">
+                            <div class="text-4xl font-bold text-blue-400 mb-2 stat-number" data-target="892">0</div>
+                            <div class="text-sm text-gray-400 mb-1">kg CO₂ Prevented</div>
+                            <div class="flex items-center justify-center text-xs text-green-400">
+                                <span class="mr-1">↗</span>
+                                <span>+18% this month</span>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-strong p-8 rounded-2xl text-center hover:bg-surface-light transition-all animate-on-scroll">
+                            <div class="text-4xl font-bold text-accent mb-2 stat-number" data-target="2156">0</div>
+                            <div class="text-sm text-gray-400 mb-1">People Served</div>
+                            <div class="flex items-center justify-center text-xs text-green-400">
+                                <span class="mr-1">↗</span>
+                                <span>+31% this month</span>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-strong p-8 rounded-2xl text-center hover:bg-surface-light transition-all animate-on-scroll">
+                            <div class="text-4xl font-bold text-purple-400 mb-2 stat-number" data-target="43">0</div>
+                            <div class="text-sm text-gray-400 mb-1">Active Listings</div>
+                            <div class="flex items-center justify-center text-xs text-green-400">
+                                <span class="mr-1">↗</span>
+                                <span>+12% today</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- @END_COMPONENT: PlatformImpact -->
+
+            <!-- @COMPONENT: AIFeaturesShowcase [Google Gemini AI capabilities with live preview] -->
+            <section id="features" class="relative py-20 px-6 bg-gradient-to-b from-transparent to-surface/20">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16 animate-on-scroll">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-6 text-white">Powered by Google Gemini AI</h2>
+                        <p class="text-xl text-gray-300">Advanced AI capabilities that make food sharing smarter, safer, and more sustainable</p>
+                    </div>
+                    
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <div class="space-y-8 animate-on-scroll">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-primary to-green-400 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <span class="text-xl">🧠</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold mb-2 text-white">Smart Food Categorization</h3>
+                                    <p class="text-gray-300 leading-relaxed">AI automatically categorizes food items into meals, snacks, beverages, and more for better organization.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <span class="text-xl">🌡️</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold mb-2 text-white">Freshness Assessment</h3>
+                                    <p class="text-gray-300 leading-relaxed">Real-time freshness evaluation with safety recommendations and optimal consumption timeframes.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <span class="text-xl">⚡</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold mb-2 text-white">Instant Processing</h3>
+                                    <p class="text-gray-300 leading-relaxed">Lightning-fast analysis of food images with immediate categorization and safety insights.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Analysis Preview Card -->
+                        <div class="glass-strong rounded-2xl p-6 animate-on-scroll">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-white">AI Analysis Preview</h3>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                                    <span class="text-xs text-green-400 font-medium">Live Processing</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Sample food analysis with realistic image -->
+                            <!-- A delicious homemade vegetable lasagna with layers of pasta, vegetables, and cheese -->
+                            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400" alt="Homemade vegetable lasagna" class="w-full h-48 object-cover rounded-xl mb-4" />
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-white font-medium">Homemade Vegetable Lasagna</span>
+                                    <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">Fresh</span>
+                                </div>
+                                
+                                <div class="text-sm text-gray-300">
+                                    <div class="mb-2"><strong>Category:</strong> Main Course • Italian</div>
+                                    <div class="mb-2"><strong>Portions:</strong> 6-8 servings</div>
+                                    <div class="mb-2"><strong>Best By:</strong> Within 2 days (refrigerated)</div>
+                                    <div><strong>Safety:</strong> ✅ Safe for consumption</div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between pt-3 border-t border-white/10">
+                                    <div class="text-xs text-gray-400">Analyzed by Gemini AI</div>
+                                    <div class="text-xs text-primary font-medium">95% Confidence</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- @END_COMPONENT: AIFeaturesShowcase -->
+
+            <!-- @COMPONENT: HowItWorksSection [3-step process with interactive elements] -->
+            <section id="how-it-works" class="relative py-20 px-6">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16 animate-on-scroll">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-6 text-white">How EcoShare Works</h2>
+                        <p class="text-xl text-gray-300">Simple, secure, and sustainable food sharing in just three steps</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-12">
+                        <div class="text-center animate-on-scroll">
+                            <div class="relative mb-8">
+                                <div class="w-20 h-20 bg-gradient-to-r from-primary to-green-400 rounded-2xl flex items-center justify-center mx-auto">
+                                    <span class="text-3xl">📱</span>
+                                </div>
+                                <div class="absolute -top-2 -right-2 w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                                    <span class="text-sm font-bold text-white">1</span>
+                                </div>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4 text-white">List Surplus Food</h3>
+                            <p class="text-gray-300 leading-relaxed">Snap a photo of your surplus food. Our AI automatically categorizes and assesses freshness for safe sharing.</p>
+                        </div>
+                        
+                        <div class="text-center animate-on-scroll" style="animation-delay: 0.2s;">
+                            <div class="relative mb-8">
+                                <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto">
+                                    <span class="text-3xl">🔍</span>
+                                </div>
+                                <div class="absolute -top-2 -right-2 w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                                    <span class="text-sm font-bold text-white">2</span>
+                                </div>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4 text-white">Browse & Reserve</h3>
+                            <p class="text-gray-300 leading-relaxed">Discover available food near you. Filter by category, location, and freshness. Reserve items with one tap.</p>
+                        </div>
+                        
+                        <div class="text-center animate-on-scroll" style="animation-delay: 0.4s;">
+                            <div class="relative mb-8">
+                                <div class="w-20 h-20 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto">
+                                    <span class="text-3xl">🤝</span>
+                                </div>
+                                <div class="absolute -top-2 -right-2 w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                                    <span class="text-sm font-bold text-white">3</span>
+                                </div>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4 text-white">Pickup & Impact</h3>
+                            <p class="text-gray-300 leading-relaxed">Coordinate pickup with providers. Track your environmental impact and contribution to campus sustainability.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- @END_COMPONENT: HowItWorksSection -->
+
+            <!-- @COMPONENT: FoodListingsGrid [modern cards with hover effects and filtering] -->
+            <section class="relative py-20 px-6 bg-gradient-to-b from-surface/10 to-transparent">
+                <div class="max-w-6xl mx-auto">
+                    <div class="flex items-center justify-between mb-12 animate-on-scroll">
+                        <div>
+                            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Available Food</h2>
+                            <p class="text-gray-300">Fresh listings from your campus community</p>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3">
+                            <div class="glass px-4 py-2 rounded-lg">
+                                <select class="bg-transparent text-white text-sm focus:outline-none">
+                                    <option value="all">All Categories</option>
+                                    <option value="meals">Meals</option>
+                                    <option value="snacks">Snacks</option>
+                                    <option value="beverages">Beverages</option>
+                                </select>
+                            </div>
+                            
+                            <button data-event="click:handleCreateListing" class="btn-primary px-6 py-2 rounded-lg font-medium">
+                                + Add Listing
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- @MAP: foodListings.map(listing => ( -->
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="glass-strong rounded-2xl overflow-hidden hover:bg-surface-light transition-all transform hover:scale-105 cursor-pointer animate-on-scroll" data-mock="true">
+                            <!-- A fresh garden salad with mixed greens, tomatoes, and vegetables -->
+                            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250" alt="Fresh garden salad" class="w-full h-48 object-cover" />
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="text-lg font-semibold text-white">Fresh Garden Salad</h3>
+                                    <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">Fresh</span>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-4">Mixed greens with cherry tomatoes, cucumbers, and balsamic dressing</p>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">📍 Student Center</span>
+                                    <span class="text-primary font-medium">2 portions</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-strong rounded-2xl overflow-hidden hover:bg-surface-light transition-all transform hover:scale-105 cursor-pointer animate-on-scroll" data-mock="true">
+                            <!-- A homemade pizza with fresh toppings and melted cheese -->
+                            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250" alt="Homemade pizza" class="w-full h-48 object-cover" />
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="text-lg font-semibold text-white">Homemade Pizza</h3>
+                                    <span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">Good</span>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-4">Margherita pizza with fresh basil, mozzarella, and tomato sauce</p>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">📍 Dorm Kitchen</span>
+                                    <span class="text-primary font-medium">4 slices</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-strong rounded-2xl overflow-hidden hover:bg-surface-light transition-all transform hover:scale-105 cursor-pointer animate-on-scroll" data-mock="true">
+                            <!-- Fresh fruit assortment with apples, bananas, and oranges -->
+                            <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250" alt="Fresh fruit assortment" class="w-full h-48 object-cover" />
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="text-lg font-semibold text-white">Fresh Fruit Mix</h3>
+                                    <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">Fresh</span>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-4">Assorted seasonal fruits - apples, bananas, oranges, and berries</p>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">📍 Cafeteria</span>
+                                    <span class="text-primary font-medium">Various</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                    
+                    <div class="text-center mt-12 animate-on-scroll">
+                        <button data-event="click:handleLoadMore" class="glass-strong px-8 py-3 rounded-xl font-medium text-white hover:bg-surface-light transition-all">
+                            Load More Listings
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <!-- @END_COMPONENT: FoodListingsGrid -->
+
+            <!-- @COMPONENT: Footer [modern footer with links and branding] -->
+            <footer class="relative py-16 px-6 bg-surface/20">
+                <div class="max-w-6xl mx-auto">
+                    <div class="grid md:grid-cols-4 gap-8 mb-12">
+                        <div class="animate-on-scroll">
+                            <div class="flex items-center space-x-3 mb-6">
+                                <div class="w-10 h-10 bg-gradient-to-r from-primary to-primary-dark rounded-xl flex items-center justify-center">
+                                    <span class="text-xl">🌱</span>
+                                </div>
+                                <span class="text-xl font-bold text-white">EcoShare</span>
+                            </div>
+                            <p class="text-gray-300 leading-relaxed mb-4">
+                                Connecting campus communities through sustainable food sharing powered by AI.
+                            </p>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-xs text-gray-400">Powered by</span>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm font-medium text-primary">Google Gemini AI</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="animate-on-scroll">
+                            <h3 class="text-lg font-semibold text-white mb-4">Platform</h3>
+                            <ul class="space-y-3 text-gray-300">
+                                <li><a href="#" class="hover:text-primary transition-colors">How it Works</a></li>
+                                <li><a href="#" class="hover:text-primary transition-colors">Safety Guidelines</a></li>
+                                <li><a href="#" class="hover:text-primary transition-colors">Community Rules</a></li>
+                                <li><a href="#" class="hover:text-primary transition-colors">Impact Reports</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="animate-on-scroll">
+                            <h3 class="text-lg font-semibold text-white mb-4">Support</h3>
+                            <ul class="space-y-3 text-gray-300">
+                                <li><a href="#" class="hover:text-primary transition-colors">Help Center</a></li>
+                                <li><a href="#" class="hover:text-primary transition-colors">Contact Us</a></li>
+                                <li><a href="#" class="hover:text-primary transition-colors">Report Issue</a></li>
+                                <li><a href="#" class="hover:text-primary transition-colors">Feedback</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="animate-on-scroll">
+                            <h3 class="text-lg font-semibold text-white mb-4">Legal</h3>
+                            <ul class="space-y-3 text-gray-300">
+                                <li><a href="#" class="hover:text-primary transition-colors">Privacy Policy</a></li>
+                                <li><a href="#" class="hover:text-primary transition-colors">Terms of Service</a></li>
+                                <li><a href="#" class="hover:text-primary transition-colors">Cookie Policy</a></li>
+                                <li><a href="#" class="hover:text-primary transition-colors">Accessibility</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-white/10 pt-8 animate-on-scroll">
+                        <div class="flex flex-col md:flex-row items-center justify-between">
+                            <p class="text-gray-400 text-sm">
+                                © 2024 EcoShare. All rights reserved.
+                            </p>
+                            <div class="flex items-center space-x-6 mt-4 md:mt-0">
+                                <span class="text-xs text-gray-500">Made with ❤️ for sustainable communities</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!-- @END_COMPONENT: Footer -->
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        (function() {
+            // Scroll Animation Observer
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Trigger counter animation for stat numbers
+                        if (entry.target.querySelector('.stat-number')) {
+                            animateCounter(entry.target.querySelector('.stat-number'));
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all elements with animation class
+            document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Counter Animation Function
+            function animateCounter(element) {
+                const target = parseInt(element.getAttribute('data-target') || '0');
+                const duration = 2000;
+                const startTime = performance.now();
+                
+                function updateCounter(currentTime) {
+                    const elapsedTime = currentTime - startTime;
+                    const progress = Math.min(elapsedTime / duration, 1);
+                    
+                    // Easing function
+                    const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                    const currentValue = Math.floor(target * easeOutCubic);
+                    
+                    element.textContent = currentValue.toLocaleString();
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(updateCounter);
+                    }
+                }
+                
+                requestAnimationFrame(updateCounter);
+            }
+
+            // Parallax Effect for Background
+            let ticking = false;
+
+            function updateParallax() {
+                const scrollTop = window.pageYOffset;
+                const parallaxBg = document.querySelector('.parallax-bg');
+                
+                if (parallaxBg) {
+                    const speed = scrollTop * 0.3;
+                    parallaxBg.style.transform = `translateY(${speed}px)`;
+                }
+                
+                ticking = false;
+            }
+
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(updateParallax);
+                    ticking = true;
+                }
+            });
+
+            // Food Emoji Hover Effects
+            document.querySelectorAll('.food-emoji').forEach(emoji => {
+                emoji.addEventListener('mouseenter', () => {
+                    emoji.style.animationPlayState = 'paused';
+                });
+                
+                emoji.addEventListener('mouseleave', () => {
+                    emoji.style.animationPlayState = 'running';
+                });
+            });
+
+            // Mock Button Interactions
+            document.addEventListener('click', (e) => {
+                const mockElement = e.target.closest('[data-event]');
+                if (mockElement) {
+                    const event = mockElement.getAttribute('data-event');
+                    console.log(`Mock interaction: ${event}`);
+                    
+                    // Visual feedback for button clicks
+                    mockElement.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        mockElement.style.transform = '';
+                    }, 150);
+                }
+            });
+
+            // Loading State Simulation
+            window.addEventListener('load', () => {
+                document.body.classList.add('loaded');
+            });
+
+        })();
+    </script>
+</body>
+</html>

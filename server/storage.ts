@@ -237,10 +237,7 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
-  async getPlatformStats(): Promise<PlatformStats | undefined> {
-    const [stats] = await db.select().from(platformStats).limit(1);
-    return stats;
-  }
+
 
   async updatePlatformStats(): Promise<PlatformStats> {
     // Calculate current platform statistics

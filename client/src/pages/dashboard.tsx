@@ -52,6 +52,8 @@ export default function Dashboard() {
         description: "Food reserved successfully! Check your pickups tab.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/my-pickups"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/food-listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
     },
     onError: (error) => {
       toast({
@@ -188,24 +190,28 @@ export default function Dashboard() {
               )}
             </TabsContent>
 
-            <TabsContent value="my-listings" className="space-y-6">
-              <h2 className="text-2xl font-bold text-white">My Food Listings</h2>
-              
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {myListings.map((listing) => (
-                  <FoodListingCard
-                    key={listing.id}
-                    listing={listing}
-                  />
-                ))}
-                {myListings.length === 0 && (
-                  <div className="col-span-full text-center py-12">
-                    <p className="text-gray-300 mb-4">You haven't created any listings yet.</p>
-                    <CreateListingDialog />
-                  </div>
-                )}
-              </div>
-            </TabsContent>
+           <TabsContent value="my-listings" className="space-y-6">
+  <h2 className="text-2xl font-bold text-white">My Food Listings</h2>
+  
+  {/* ✅ This is the corrected logic */}
+  {myListings.length > 0 ? (
+    // If there ARE listings, map over them and display them in a grid
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {myListings.map((listing) => (
+        <FoodListingCard
+          key={listing.id}
+          listing={listing}
+        />
+      ))}
+    </div>
+  ) : (
+    // Otherwise (if there are NO listings), display the empty message
+    <div className="col-span-full text-center py-12">
+      <p className="text-gray-300 mb-4">You haven't created any listings yet.</p>
+      <CreateListingDialog />
+    </div>
+  )}
+</TabsContent>
 
             <TabsContent value="pickups" className="space-y-6">
               <h2 className="text-2xl font-bold text-white">My Pickups</h2>

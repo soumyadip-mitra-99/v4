@@ -58,7 +58,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         email: profile.emails?.[0]?.value || "",
         googleId: profile.id,
         name: profile.displayName || "",
-        profilePicture: profile.photos?.[0]?.value || "",
+        profilePicture: profile.image?.[0]?.value || "",
       });
       return done(null, user);
     } catch (error) {
@@ -192,11 +192,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/food-listings", requireAuth, upload.single("image"), async (req: any, res) => {
     try {
       let listingData = JSON.parse(req.body.data || "{}");
+      let imageUrl = null; // Initialize imageUrl as null
       
       // AI image analysis if image provided
       if (req.file) {
         try {
           const imageBase64 = req.file.buffer.toString('base64');
+          imageUrl = `data:${req.file.mimetype};base64,${imageBase64}`;
           const analysis = await analyzeFoodImage(imageBase64, req.file.mimetype);
           
           // Use AI analysis to enhance listing data
@@ -219,7 +221,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         providerId: req.user.id,
       });
 
-      const listing = await storage.createFoodListing(validatedData);
+          const listing = await storage.createFoodListing({
+      ...validatedData,
+      imageUrl: imageUrl, // Save the Base64 string (or null if no image)
+    });
+
+
       res.json(listing);
     } catch (error) {
       console.error("Failed to create food listing:", error);
@@ -322,6 +329,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to update notification" });
     }
   });
+  // Add this new route to your server/routes.ts file
+
+app.post("/api/analyze-image", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No image file provided." });
+    }
+
+    // Convert the image file to a Base64 string for Gemini
+    const imageBase64 = req.file.buffer.toString("base64");
+    
+    // Call your Gemini analysis function
+    const analysis = await analyzeFoodImage(imageBase64, req.file.mimetype);
+
+    // Send the structured JSON analysis back to the frontend
+    res.json(analysis);
+
+  } catch (error) {
+    console.error("Analysis endpoint error:", error);
+    res.status(500).json({ error: "Failed to analyze image." });
+  }
+});
+// Add this new route for completing a pickup
+// Add this new route for completing a pickup
 
   const httpServer = createServer(app);
   return httpServer;

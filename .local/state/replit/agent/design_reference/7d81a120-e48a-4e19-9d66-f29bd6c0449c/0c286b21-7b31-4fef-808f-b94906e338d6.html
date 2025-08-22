@@ -1,0 +1,548 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoShare - AI-Powered Campus Food Sharing Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        },
+                        secondary: {
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        fresh: '#10b981',
+                        moderate: '#f59e0b',
+                        urgent: '#ef4444',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'slide-up': 'slideUp 0.8s ease-out',
+                        'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(30px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { 
+                                boxShadow: '0 0 20px rgba(16, 185, 129, 0.3)',
+                                transform: 'scale(1)' 
+                            },
+                            '50%': { 
+                                boxShadow: '0 0 30px rgba(16, 185, 129, 0.6)',
+                                transform: 'scale(1.02)' 
+                            },
+                        },
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(16, 185, 129, 0.3)',
+                        'glow-lg': '0 0 30px rgba(16, 185, 129, 0.6)',
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50 font-sans">
+    <!-- @COMPONENT: NavigationHeader [authenticated state] -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-leaf text-white text-sm"></i>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">EcoShare</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#" class="bg-primary-50 text-primary-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Browse Food</a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Share Food</a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">My Pickups</a>
+                    </div>
+                </div>
+
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center" data-mock="true">3</span>
+                    </button>
+
+                    <!-- User Profile -->
+                    <div class="flex items-center space-x-3">
+                        <!-- User profile image placeholder -->
+                        <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150" alt="User profile" data-mock-image="true" data-implementation="Use Google OAuth profile image">
+                        <span class="text-sm font-medium text-gray-700" data-bind="user.name">John Doe</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: NavigationHeader -->
+
+    <!-- @COMPONENT: DashboardContainer [main content area] -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Dashboard Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome back, <span data-bind="user.firstName">John</span>!</h1>
+            <p class="text-gray-600">Track your environmental impact and discover food sharing opportunities in your community.</p>
+        </div>
+
+        <!-- @COMPONENT: StatisticsCards [user impact metrics] -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Food Saved Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Food Saved</p>
+                        <p class="text-2xl font-bold text-gray-900" data-bind="userStats.totalFoodSaved">12.5 kg</p>
+                    </div>
+                    <div class="p-3 bg-primary-50 rounded-lg">
+                        <i class="fas fa-utensils text-primary-500 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm text-primary-600">
+                    <i class="fas fa-arrow-up mr-1"></i>
+                    <span>+2.3 kg this week</span>
+                </div>
+            </div>
+
+            <!-- Carbon Saved Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">CO₂ Saved</p>
+                        <p class="text-2xl font-bold text-gray-900" data-bind="userStats.totalCarbonSaved">31.2 kg</p>
+                    </div>
+                    <div class="p-3 bg-green-50 rounded-lg">
+                        <i class="fas fa-leaf text-green-500 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm text-green-600">
+                    <i class="fas fa-arrow-up mr-1"></i>
+                    <span>+5.7 kg this week</span>
+                </div>
+            </div>
+
+            <!-- People Served Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">People Served</p>
+                        <p class="text-2xl font-bold text-gray-900" data-bind="userStats.totalPeopleServed">47</p>
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded-lg">
+                        <i class="fas fa-users text-blue-500 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm text-blue-600">
+                    <i class="fas fa-arrow-up mr-1"></i>
+                    <span>+8 this week</span>
+                </div>
+            </div>
+
+            <!-- Community Impact Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Community Rank</p>
+                        <p class="text-2xl font-bold text-gray-900">#12</p>
+                    </div>
+                    <div class="p-3 bg-purple-50 rounded-lg">
+                        <i class="fas fa-trophy text-purple-500 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm text-purple-600">
+                    <i class="fas fa-arrow-up mr-1"></i>
+                    <span>+3 positions</span>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: StatisticsCards -->
+
+        <!-- @COMPONENT: ActionButtons [quick actions] -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <button class="flex-1 bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-primary-600 hover:to-primary-700 transition-all transform hover:scale-105 shadow-lg" data-event="click:handleShareFood">
+                <i class="fas fa-plus mr-2"></i>
+                Share Food
+            </button>
+            <button class="flex-1 bg-white text-primary-600 border-2 border-primary-600 px-6 py-3 rounded-xl font-semibold hover:bg-primary-50 transition-all">
+                <i class="fas fa-search mr-2"></i>
+                Browse Available Food
+            </button>
+        </div>
+        <!-- @END_COMPONENT: ActionButtons -->
+
+        <!-- @COMPONENT: ContentTabs [dashboard sections] -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+            <!-- Tab Navigation -->
+            <div class="border-b border-gray-200">
+                <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                    <button class="border-b-2 border-primary-500 py-4 px-1 text-sm font-medium text-primary-600 whitespace-nowrap">
+                        Recent Listings
+                    </button>
+                    <button class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                        My Pickups
+                    </button>
+                    <button class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                        Notifications
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content: Recent Listings -->
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- @MAP: recentListings.map(listing => ( -->
+                    
+                    <!-- Food Listing Card 1 -->
+                    <div class="group cursor-pointer transform transition-all hover:scale-105" data-mock="true">
+                        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+                            <!-- Fresh homemade pasta with marinara sauce -->
+                            <img src="https://pixabay.com/get/g0131ca1351187aa6531ee8a08d57aff45f1395f005ca2d1b1b47214854591febe15174df172b5f8ca9c216b9a54052ad30a5927f01aabc60d55347e9b9d14cf7_1280.jpg" alt="Fresh homemade pasta with marinara sauce" class="w-full h-48 object-cover group-hover:opacity-90 transition-opacity">
+                            
+                            <div class="p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <i class="fas fa-circle text-fresh mr-1 text-xs"></i>
+                                        Fresh
+                                    </span>
+                                    <span class="text-xs text-gray-500">2 hours ago</span>
+                                </div>
+                                
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Homemade Pasta</h3>
+                                <p class="text-sm text-gray-600 mb-3">Fresh marinara pasta, serves 4 people. Made with organic ingredients.</p>
+                                
+                                <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
+                                    <span><i class="fas fa-map-marker-alt mr-1"></i>Campus Center</span>
+                                    <span><i class="fas fa-users mr-1"></i>Serves 4</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-green-600">
+                                        <i class="fas fa-leaf mr-1"></i>
+                                        <span>2.1 kg CO₂ saved</span>
+                                    </div>
+                                    <button class="bg-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors">
+                                        Reserve
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Food Listing Card 2 -->
+                    <div class="group cursor-pointer transform transition-all hover:scale-105" data-mock="true">
+                        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+                            <!-- Fresh fruit salad with mixed berries and seasonal fruits -->
+                            <img src="https://pixabay.com/get/gfe32b9d5f21e09bf22e879b2d2d6224b5a2f2d56cba8dd2099804ae3cf0f1ec98ade147cd6c83443b3d1209c51f6ad46741a4135bc514d33dc335a0fab38c44d_1280.jpg" alt="Fresh fruit salad with mixed berries and seasonal fruits" class="w-full h-48 object-cover group-hover:opacity-90 transition-opacity">
+                            
+                            <div class="p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        <i class="fas fa-circle text-moderate mr-1 text-xs"></i>
+                                        Moderate
+                                    </span>
+                                    <span class="text-xs text-gray-500">4 hours ago</span>
+                                </div>
+                                
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Fresh Fruit Salad</h3>
+                                <p class="text-sm text-gray-600 mb-3">Mixed seasonal fruits with berries. Perfect for a healthy snack.</p>
+                                
+                                <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
+                                    <span><i class="fas fa-map-marker-alt mr-1"></i>Library Café</span>
+                                    <span><i class="fas fa-users mr-1"></i>Serves 3</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-green-600">
+                                        <i class="fas fa-leaf mr-1"></i>
+                                        <span>1.4 kg CO₂ saved</span>
+                                    </div>
+                                    <button class="bg-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors">
+                                        Reserve
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Food Listing Card 3 -->
+                    <div class="group cursor-pointer transform transition-all hover:scale-105" data-mock="true">
+                        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+                            <!-- Freshly baked chocolate chip cookies -->
+                            <img src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=250" alt="Freshly baked chocolate chip cookies" class="w-full h-48 object-cover group-hover:opacity-90 transition-opacity">
+                            
+                            <div class="p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        <i class="fas fa-circle text-urgent mr-1 text-xs"></i>
+                                        Urgent
+                                    </span>
+                                    <span class="text-xs text-gray-500">6 hours ago</span>
+                                </div>
+                                
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Chocolate Cookies</h3>
+                                <p class="text-sm text-gray-600 mb-3">Homemade chocolate chip cookies. Best consumed today!</p>
+                                
+                                <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
+                                    <span><i class="fas fa-map-marker-alt mr-1"></i>Dorm Kitchen</span>
+                                    <span><i class="fas fa-users mr-1"></i>Serves 6</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-green-600">
+                                        <i class="fas fa-leaf mr-1"></i>
+                                        <span>0.8 kg CO₂ saved</span>
+                                    </div>
+                                    <button class="bg-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors">
+                                        Reserve
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- @END_MAP )) -->
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <button class="text-primary-600 font-medium hover:text-primary-700 transition-colors">
+                        View All Listings <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ContentTabs -->
+
+        <!-- @COMPONENT: CommunityImpactSection [platform statistics] -->
+        <div class="mt-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-8 text-white">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold mb-2">Community Impact</h2>
+                <p class="text-primary-100">Together, we're making a difference in food waste reduction</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="text-3xl font-bold mb-1" data-bind="platformStats.totalFoodSaved">1,247 kg</div>
+                    <div class="text-primary-100">Total Food Saved</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold mb-1" data-bind="platformStats.totalCarbonSaved">3,118 kg</div>
+                    <div class="text-primary-100">CO₂ Emissions Prevented</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold mb-1" data-bind="platformStats.totalPeopleServed">2,456</div>
+                    <div class="text-primary-100">People Fed</div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: CommunityImpactSection -->
+    </div>
+    <!-- @END_COMPONENT: DashboardContainer -->
+
+    <!-- @COMPONENT: ShareFoodModal [food listing creation] -->
+    <div id="shareFoodModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-gray-900">Share Food with Community</h2>
+                    <button class="text-gray-400 hover:text-gray-600" onclick="closeModal()">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <form class="p-6 space-y-6" data-implementation="Should validate form before submission">
+                <!-- Food Title -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Food Title*</label>
+                    <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="e.g., Homemade Pasta" required>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Description*</label>
+                    <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" rows="3" placeholder="Describe your food item..." required></textarea>
+                </div>
+
+                <!-- Category and Quantity -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category*</label>
+                        <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required>
+                            <option value="">Select category</option>
+                            <option value="meals">Meals</option>
+                            <option value="snacks">Snacks</option>
+                            <option value="beverages">Beverages</option>
+                            <option value="baked_goods">Baked Goods</option>
+                            <option value="fruits_vegetables">Fruits & Vegetables</option>
+                            <option value="dairy">Dairy</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Quantity*</label>
+                        <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="e.g., Serves 4" required>
+                    </div>
+                </div>
+
+                <!-- Location and Freshness -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Pickup Location*</label>
+                        <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="e.g., Campus Center" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Freshness Status*</label>
+                        <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required>
+                            <option value="fresh">Fresh - Best quality</option>
+                            <option value="moderate">Moderate - Good condition</option>
+                            <option value="urgent">Urgent - Consume soon</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Available Until -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Available Until*</label>
+                    <input type="datetime-local" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required>
+                </div>
+
+                <!-- Pickup Instructions -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Pickup Instructions</label>
+                    <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" rows="2" placeholder="Any special instructions for pickup..."></textarea>
+                </div>
+
+                <!-- AI Analysis Preview -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center text-sm text-gray-600 mb-2">
+                        <i class="fas fa-robot mr-2"></i>
+                        AI will analyze your food for optimal categorization and environmental impact
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        <!-- @FUNCTIONALITY: This should show AI analysis results after form submission -->
+                        Analysis includes: category verification, freshness assessment, carbon savings calculation, and safety recommendations
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors" onclick="closeModal()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-primary-500 to-primary-600 text-white py-3 rounded-lg font-medium hover:from-primary-600 hover:to-primary-700 transition-all" data-event="click:handleSubmit">
+                        <i class="fas fa-share-alt mr-2"></i>
+                        Share Food
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ShareFoodModal -->
+
+    <!-- @COMPONENT: NotificationToast [success/error feedback] -->
+    <div id="notificationToast" class="fixed top-4 right-4 z-60 hidden">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-w-sm">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-500 text-lg"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-900">Food listing created successfully!</p>
+                    <p class="text-xs text-gray-500 mt-1">AI analysis completed and environmental impact calculated.</p>
+                </div>
+                <div class="ml-4 flex-shrink-0">
+                    <button class="text-gray-400 hover:text-gray-600" onclick="hideNotification()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: NotificationToast -->
+
+    <!-- @STATE: isShareModalOpen:boolean = false -->
+    <!-- @STATE: notifications:array = [] -->
+    <!-- @STATE: userStats:object = {} -->
+    <!-- @STATE: platformStats:object = {} -->
+
+    <script>
+        (function() {
+            // TODO: Implement business logic, API calls, or state management
+            
+            function showShareModal() {
+                document.getElementById('shareFoodModal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+                document.getElementById('shareFoodModal').classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+
+            function showNotification() {
+                document.getElementById('notificationToast').classList.remove('hidden');
+                setTimeout(() => {
+                    hideNotification();
+                }, 5000);
+            }
+
+            function hideNotification() {
+                document.getElementById('notificationToast').classList.add('hidden');
+            }
+
+            // Event listeners
+            document.querySelector('[data-event="click:handleShareFood"]').addEventListener('click', showShareModal);
+            
+            document.querySelector('[data-event="click:handleSubmit"]').addEventListener('click', function(e) {
+                e.preventDefault();
+                // TODO: Implement form validation and submission
+                closeModal();
+                showNotification();
+            });
+
+            // Make functions globally available
+            window.closeModal = closeModal;
+            window.hideNotification = hideNotification;
+
+            // Initialize dashboard data on load
+            document.addEventListener('DOMContentLoaded', function() {
+                // TODO: Fetch user stats and platform stats from API
+                // TODO: Load recent food listings
+                // TODO: Check for notifications
+            });
+        })();
+    </script>
+</body>
+</html>

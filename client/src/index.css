@@ -89,10 +89,11 @@
 }
 
 .glass-strong {
-  background: var(--glassmorphism-strong);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid hsla(0, 0%, 100%, 0.15);
+  /* This uses a semi-transparent black that is visible on any background */
+  background-color: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* For Safari support */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* A light border works on both */
 }
 
 /* Parallax Background Elements */
@@ -213,7 +214,10 @@
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+
 }
+
+
 
 .food-emoji:hover {
   transform: scale(1.2) rotateY(15deg);
@@ -324,6 +328,7 @@
     background-position: 0% 50%;
   }
 }
+
 
 .rgb-light-bar {
   position: absolute;

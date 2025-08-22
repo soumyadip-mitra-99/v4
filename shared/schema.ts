@@ -77,7 +77,11 @@ export const insertUserSchema = createInsertSchema(users).omit({
   updatedAt: true,
 });
 
-export const insertFoodListingSchema = createInsertSchema(foodListings).omit({
+export const insertFoodListingSchema = createInsertSchema(foodListings, {
+  // ✅ This is the change.
+  // It tells Zod to accept a string and convert it to a Date.
+  availableUntil: z.coerce.date(), 
+}).omit({
   id: true,
   createdAt: true,
   updatedAt: true,

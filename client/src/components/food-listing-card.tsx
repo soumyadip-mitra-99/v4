@@ -29,24 +29,23 @@ export function FoodListingCard({ listing, onReserve, isLoading }: FoodListingCa
   };
 
   return (
-    <Card className="glass-strong rounded-2xl overflow-hidden hover:bg-surface-light transition-all transform hover:scale-105 cursor-pointer animate-on-scroll">
-      {listing.imageUrl && (
-        <img 
-          src={listing.imageUrl} 
-          alt={listing.title}
-          className="w-full h-48 object-cover"
-        />
-      )}
-      <CardContent className="p-6">
+    <Card className="bg-grey-800/20 backdrop-blur-sm border border-gray-700/50 rounded-2xl overflow-hidden transition-all duration-300 hover:border-gray-500 hover:shadow-lg hover:shadow-primary/10">
+     {listing.imageUrl && (
+  <img 
+    src={listing.imageUrl} 
+    alt={listing.title}
+    className="w-full h-48 object-cover"
+  />
+)}      <CardContent className="p-6">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-white">{listing.title}</h3>
+          <h3 className="text-lg font-semibold text-green">{listing.title}</h3>
           <Badge className={`${getFreshnessColor(listing.freshnessLevel)} text-white text-xs px-2 py-1 rounded-full border-0`}>
             {getFreshnessText(listing.freshnessLevel)}
           </Badge>
         </div>
-        <p className="text-gray-300 text-sm mb-4">{listing.description}</p>
+        <p className="text-gray-600 text-sm mb-4">{listing.description}</p>
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-400">📍 {listing.location}</span>
+          <span className="text-gray-500">📍 {listing.location}</span>
           <span className="text-primary font-medium">{listing.portions} portions</span>
         </div>
       </CardContent>
